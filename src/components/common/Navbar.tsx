@@ -1,6 +1,6 @@
 export default function Navbar() {
   return (
-    <div className="navbar bg-base-100 shadow-sm px-20">
+    <div className="navbar bg-base-100 shadow-sm px-5">
         <div className="navbar-start">
             <div className="dropdown">
             <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -20,7 +20,7 @@ export default function Navbar() {
                 <li><a>Features</a></li>
             </ul>
             </div>
-            <a className="btn btn-ghost text-xl">BriefMyBlog</a>
+            <a className="btn btn-ghost text-xl">Summarist</a>
         </div>
         <div className="navbar-center hidden lg:flex">
             <ul className="menu menu-horizontal px-1">
