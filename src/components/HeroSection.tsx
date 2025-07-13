@@ -6,6 +6,8 @@ import { Input } from "./ui/input";
 
 export default function HeroSection() {
     const [url, setUrl] = useState("")
+    const [summary, setSummary] = useState("")
+
 
     const handleSubmit = async () => {
         if (!url) return
@@ -18,7 +20,17 @@ export default function HeroSection() {
             })
 
             const data = await res.json()
-            console.log("Scraped blog content:", data.content)
+            // console.log("Scraped blog content:", data.content)
+
+            const fullText = data.content
+
+            // Testing summary logic without AI: pick first 3–4 sentences
+            const sentences = fullText.split('. ')
+            const summary = sentences.slice(0, 4).join('. ') + '.'
+
+            console.log("Simulated summary:", summary)
+            setSummary(summary)
+
 
             // Later summary and translation can be simulated here
         } catch (err) {
@@ -73,6 +85,13 @@ export default function HeroSection() {
             </Button>
         </div>
       </div>
+
+      {summary && (
+            <div className="mt-12 bg-white p-4 rounded-2xl shadow max-w-2xl mx-auto text-left">
+                <h2 className="text-xl font-semibold mb-2">Summary</h2>
+                <p className="text-gray-800">{summary}</p>
+            </div>
+        )}
     </div>
 
   );
