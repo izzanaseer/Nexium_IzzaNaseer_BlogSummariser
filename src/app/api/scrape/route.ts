@@ -18,8 +18,20 @@ export async function POST(req: NextRequest) {
     const $ = cheerio.load(html)
 
     // Extracting main text content — basic logic
-    const text = $("body").text()
-    const cleanedText = text.replace(/\s+/g, " ").trim()
+    // Try to extract only the article content
+    let articleText = ""
+
+    // Try Medium-specific article container first
+    if ($("article").length) {
+    articleText = $("article").text()
+    } else {
+    // Fallback: remove unwanted sections and use body
+    $("header, footer, nav, script, style").remove()
+    articleText = $("body").text()
+    }
+
+    // Clean up whitespace
+    const cleanedText = articleText.replace(/\s+/g, " ").trim()
 
     return NextResponse.json({ content: cleanedText })
   } catch (error) {

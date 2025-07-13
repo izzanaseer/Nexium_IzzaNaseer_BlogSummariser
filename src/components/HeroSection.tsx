@@ -20,7 +20,6 @@ export default function HeroSection() {
             })
 
             const data = await res.json()
-            // console.log("Scraped blog content:", data.content)
 
             const fullText = data.content
 
@@ -28,11 +27,8 @@ export default function HeroSection() {
             const sentences = fullText.split('. ')
             const summary = sentences.slice(0, 4).join('. ') + '.'
 
-            console.log("Simulated summary:", summary)
             setSummary(summary)
-
-
-            // Later summary and translation can be simulated here
+            setUrl("")
         } catch (err) {
             console.error("Failed to fetch blog content", err)
         }
