@@ -7,10 +7,25 @@ import { Input } from "./ui/input";
 export default function HeroSection() {
     const [url, setUrl] = useState("")
 
-  const handleSubmit = () => {
-    console.log("Blog URL submitted:", url)
-    // Later call an API here
-  }
+    const handleSubmit = async () => {
+        if (!url) return
+
+        try {
+            const res = await fetch("/api/scrape", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url })
+            })
+
+            const data = await res.json()
+            console.log("Scraped blog content:", data.content)
+
+            // Later summary and translation can be simulated here
+        } catch (err) {
+            console.error("Failed to fetch blog content", err)
+        }
+    }
+
   
   return (
     <div className="bg-gradient-to-r from-white to-blue-300 pb-48">
@@ -53,7 +68,7 @@ export default function HeroSection() {
                 onChange={(e) => setUrl(e.target.value)}
                 className="w-full"
             />
-            <Button onClick={handleSubmit} className="bg-blue-600 text-white hover:bg-blue-700">
+            <Button onClick={handleSubmit} className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
                 Summarize
             </Button>
         </div>
