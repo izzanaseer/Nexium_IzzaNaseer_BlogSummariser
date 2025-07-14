@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { translateToUrdu } from "@/lib/urduDictionary"
 import * as cheerio from "cheerio"
+import { getMongoCollection } from "@/lib/mongoClient"
+import { supabase } from "@/lib/supabaseClient"
 
 // This route only supports POST
 export async function POST(req: NextRequest) {
@@ -72,6 +74,29 @@ export async function POST(req: NextRequest) {
 
     const summary = result.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, a summary could not be generated.";
     const urduSummary = translateToUrdu(summary)
+
+    // Saving full blog text to MongoDB
+    const collection = await getMongoCollection()
+    await collection.insertOne({
+      url,
+      content: cleanedText,
+      createdAt: new Date()
+    })
+
+    // Saving summary to Supabase
+    const { error } = await supabase.from("summaries").insert([
+      {
+        url,
+        summary,
+        created_at: new Date().toISOString()
+      }
+    ])
+
+    if (error) {
+      console.error("Supabase insert error:", error)
+    }
+
+
 
     // Step: Get Gemini Urdu translation
     const geminiUrduResponse = await fetch(apiURL, {
