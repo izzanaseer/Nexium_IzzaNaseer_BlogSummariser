@@ -1,36 +1,122 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📰 Blog Summariser
+
+A full-stack web application that summarizes long blog posts using Google Gemini AI and provides side-by-side Urdu translations using custom JavaScript dictionary based as well as AI based. Built with **Next.js 15**, **ShadCN UI**, **Supabase**, **MongoDB**, and **Gemini API**.
+
+---
+
+## Features
+
+- Input a blog URL and fetch the blog's full content
+- AI-powered summary generation using **Google Gemini**
+- Urdu translation:
+  - Dictionary-based (custom JS logic)
+  - Gemini API-powered (AI based)
+- Save:
+  - Summary to **Supabase**
+  - Full blog text to **MongoDB**
+- Fully responsive UI with **ShadCN UI**
+- Deployed on **Vercel**
+
+---
+
+## Tech Stack
+
+- **Frontend:** Next.js 15, ShadCN UI, TailwindCSS
+- **Backend:** Next.js API Routes
+- **AI:** Google Gemini model via API
+- **Database:**
+  - Supabase (PostgreSQL) – to store summaries
+  - MongoDB Atlas – to store full blog content
+- **Other Tools:** Cheerio (for scraping), dotenv, pnpm
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### 1. Clone the Repository
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/your-username/blog-summariser.git
+cd blog-summariser
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install Dependencies
+```bash
+pnpm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Set Environment Variables
+Create a `.env.local` file in the root folder:
+```bash
+# Google Gemini API
+GEMINI_API_KEY=your-gemini-api-key
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Supabase
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-## Learn More
+# MongoDB
+MONGODB_URI=mongodb+srv://your-mongo-connection-string
+```
+🔐 Make sure not to expose the service role or Mongo URI publicly.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
+```bash
+blog-summariser/
+│
+├── src/
+│   ├── app/
+│   │   └── api/
+│   │       └── scrape/route.ts       # Main API route for scraping and summarizing
+│   ├── components/
+│   │   ├── HeroSection.tsx           # Main landing section with input + summary
+│   │   └── ui/                        # ShadCN UI components
+│   ├── lib/
+│   │   ├── urduDictionary.ts         # Custom dictionary logic for Urdu translation
+│   │   └── mongoClient.ts            # MongoDB client setup
+├── public/
+├── styles/
+└── .env.local                        # Environment variables
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## How It Works
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. User enters a blog URL.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. The server:
+
+   - Scrapes blog HTML with Cheerio
+
+   - Extracts the article text
+
+   - Sends the text to Gemini API for summarization
+
+   - Translates the summary using a JS dictionary and AI model
+
+3. The app:
+
+   - Displays the summary
+
+   - Shows both Urdu translations side by side for comparison
+
+   - Stores the summary in Supabase
+
+   - Stores full blog in MongoDB
+
+---
+
+## License
+
+This project is licensed under the MIT License.
+
+---
+
+## Author
+
+Made with 💻 by Izza Naseer
+
+---
