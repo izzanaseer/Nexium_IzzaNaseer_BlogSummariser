@@ -8,6 +8,7 @@ export default function HeroSection() {
     const [url, setUrl] = useState("")
     const [summary, setSummary] = useState("")
     const [urduSummary, setUrduSummary] = useState("")
+    const [urduGeminiTranslation, setUrduGeminiTranslation] = useState("")
     const [loading, setLoading] = useState(false)
 
 
@@ -25,13 +26,13 @@ export default function HeroSection() {
             const data = await res.json()
 
             // const fullText = data.content
-
             // Testing summary logic without AI: pick first 3–4 sentences
             // const sentences = fullText.split('. ')
             // const summary = sentences.slice(0, 4).join('. ') + '.'
 
             setSummary(data.summary)
             setUrduSummary(data.urduSummary || "No Urdu translation available.")
+            setUrduGeminiTranslation(data.urduGeminiTranslation || "No Gemini Urdu translation available.")
             setUrl("")
         } catch (err) {
             console.error("Failed to fetch blog content", err)
@@ -89,14 +90,24 @@ export default function HeroSection() {
       </div>
 
       {summary && (
+        <div className="p-28">
             <div className="mt-12 bg-white p-4 rounded-2xl shadow max-w-2xl mx-auto text-left">
                 <h2 className="text-xl font-semibold mb-2">Summary</h2>
                 <p className="text-gray-800">{summary}</p>
-
-                <h2 className="text-xl font-bold mt-6">Urdu Translation (Dictionary-based)</h2>
-                <p>{urduSummary}</p>
             </div>
-        )}
+
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="border rounded-xl p-4 shadow bg-gray-50">
+                        <h3 className="font-semibold mb-2 text-blue-700">Urdu Translation (AI based)</h3>
+                        <p className="text-gray-800 whitespace-pre-wrap">{urduGeminiTranslation}</p>
+                    </div>
+                    <div className="border rounded-xl p-4 shadow bg-gray-50">
+                        <h3 className="font-semibold mb-2 text-purple-700">Urdu Translation (JS-Dictionary based)</h3>
+                        <p className="text-gray-800 whitespace-pre-wrap">{urduSummary}</p>
+                    </div>
+            </div>
+        </div>
+      )}
     </div>
 
   );

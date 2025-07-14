@@ -73,7 +73,34 @@ export async function POST(req: NextRequest) {
     const summary = result.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, a summary could not be generated.";
     const urduSummary = translateToUrdu(summary)
 
-    return NextResponse.json({ summary, urduSummary, content: cleanedText })
+    // Step: Get Gemini Urdu translation
+    const geminiUrduResponse = await fetch(apiURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            contents: [
+            {
+                parts: [
+                {
+                    text: `Translate the following English summary into Urdu:\n\n${summary}`,
+                },
+                ],
+            },
+            ],
+        }),
+    })
+
+    const geminiUrduResult = await geminiUrduResponse.json()
+    const urduGeminiTranslation = geminiUrduResult?.candidates?.[0]?.content?.parts?.[0]?.text || "No Gemini Urdu translation."
+
+
+    // return NextResponse.json({ summary, urduSummary, content: cleanedText })
+    return NextResponse.json({
+        summary,
+        urduSummary, // dictionary-based
+        urduGeminiTranslation,
+        content: cleanedText,
+    })
 
   } catch (error) {
         console.error("Error scraping blog:", error)
