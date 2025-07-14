@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { translateToUrdu } from "@/lib/urduDictionary"
 import * as cheerio from "cheerio"
 
 // This route only supports POST
@@ -70,8 +71,9 @@ export async function POST(req: NextRequest) {
     console.log("Gemini API Result:", result)
 
     const summary = result.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, a summary could not be generated.";
+    const urduSummary = translateToUrdu(summary)
 
-    return NextResponse.json({ summary, content: cleanedText });
+    return NextResponse.json({ summary, urduSummary, content: cleanedText })
 
   } catch (error) {
         console.error("Error scraping blog:", error)

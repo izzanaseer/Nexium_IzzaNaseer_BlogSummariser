@@ -7,6 +7,7 @@ import { Input } from "./ui/input";
 export default function HeroSection() {
     const [url, setUrl] = useState("")
     const [summary, setSummary] = useState("")
+    const [urduSummary, setUrduSummary] = useState("")
     const [loading, setLoading] = useState(false)
 
 
@@ -30,6 +31,7 @@ export default function HeroSection() {
             // const summary = sentences.slice(0, 4).join('. ') + '.'
 
             setSummary(data.summary)
+            setUrduSummary(data.urduSummary || "No Urdu translation available.")
             setUrl("")
         } catch (err) {
             console.error("Failed to fetch blog content", err)
@@ -90,6 +92,9 @@ export default function HeroSection() {
             <div className="mt-12 bg-white p-4 rounded-2xl shadow max-w-2xl mx-auto text-left">
                 <h2 className="text-xl font-semibold mb-2">Summary</h2>
                 <p className="text-gray-800">{summary}</p>
+
+                <h2 className="text-xl font-bold mt-6">Urdu Translation (Dictionary-based)</h2>
+                <p>{urduSummary}</p>
             </div>
         )}
     </div>
