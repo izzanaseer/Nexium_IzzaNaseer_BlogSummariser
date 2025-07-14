@@ -23,19 +23,61 @@ export async function POST(req: NextRequest) {
 
     // Try Medium-specific article container first
     if ($("article").length) {
-    articleText = $("article").text()
+        articleText = $("article").text()
     } else {
-    // Fallback: remove unwanted sections and use body
-    $("header, footer, nav, script, style").remove()
-    articleText = $("body").text()
+        // Fallback: remove unwanted sections and use body
+        $("header, footer, nav, script, style").remove()
+        articleText = $("body").text()
     }
 
     // Clean up whitespace
     const cleanedText = articleText.replace(/\s+/g, " ").trim()
+    const limitedText = cleanedText.slice(0, 15000) // Gemini handles ~8–15k tokens reliably
 
-    return NextResponse.json({ content: cleanedText })
+    const model = "gemini-2.0-flash";
+    const apiKey = process.env.GEMINI_API_KEY;
+    const apiURL = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+    // The request payload (body) is updated to match the new API structure.
+    const geminiResponse = await fetch(apiURL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        // The new structure uses a 'contents' array.
+        contents: [
+          {
+            parts: [
+              {
+                // The prompt is now a simple text part.
+                text: `Summarize the following blog post text in a few concise paragraphs:\n\n${limitedText}`,
+              },
+            ],
+          },
+        ],
+      }),
+    });
+
+    if (!geminiResponse.ok) {
+        // If the API response is not successful, log the error and return it.
+        const errorBody = await geminiResponse.json();
+        console.error("Gemini API Error:", errorBody);
+        return NextResponse.json({ error: "Failed to get summary from AI model.", details: errorBody }, { status: geminiResponse.status });
+    }
+
+    const result = await geminiResponse.json();
+    console.log("Gemini API Result:", result)
+
+    const summary = result.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, a summary could not be generated.";
+
+    return NextResponse.json({ summary, content: cleanedText });
+
   } catch (error) {
-    console.error("Error scraping blog:", error)
-    return NextResponse.json({ error: "Failed to fetch and parse content" }, { status: 500 })
+        console.error("Error scraping blog:", error)
+        return NextResponse.json(
+            { error: "Failed to fetch and parse content" }, 
+            { status: 500 }
+        );
   }
 }

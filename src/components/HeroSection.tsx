@@ -7,10 +7,12 @@ import { Input } from "./ui/input";
 export default function HeroSection() {
     const [url, setUrl] = useState("")
     const [summary, setSummary] = useState("")
+    const [loading, setLoading] = useState(false)
 
 
     const handleSubmit = async () => {
         if (!url) return
+        setLoading(true)
 
         try {
             const res = await fetch("/api/scrape", {
@@ -21,16 +23,18 @@ export default function HeroSection() {
 
             const data = await res.json()
 
-            const fullText = data.content
+            // const fullText = data.content
 
             // Testing summary logic without AI: pick first 3–4 sentences
-            const sentences = fullText.split('. ')
-            const summary = sentences.slice(0, 4).join('. ') + '.'
+            // const sentences = fullText.split('. ')
+            // const summary = sentences.slice(0, 4).join('. ') + '.'
 
-            setSummary(summary)
+            setSummary(data.summary)
             setUrl("")
         } catch (err) {
             console.error("Failed to fetch blog content", err)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -77,7 +81,7 @@ export default function HeroSection() {
                 className="w-full"
             />
             <Button onClick={handleSubmit} className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-                Summarize
+                {loading ? "Summarizing..." : "Summarize"}
             </Button>
         </div>
       </div>
