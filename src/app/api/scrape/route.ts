@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
     }
 
     const result = await geminiResponse.json();
-    console.log("Gemini API Result:", result)
+    // console.log("Gemini API Result:", result)
 
     const summary = result.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, a summary could not be generated.";
     const urduSummary = translateToUrdu(summary)

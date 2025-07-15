@@ -7,18 +7,16 @@ if (!uri) {
 }
 
 // Reuse connection if already established (important for serverless)
-let client: MongoClient
-let clientPromise: Promise<MongoClient>
-
 declare global {
   var _mongoClientPromise: Promise<MongoClient>
 }
 
-if (!global._mongoClientPromise) {
+let client: MongoClient
+const clientPromise = global._mongoClientPromise ?? (() => {
   client = new MongoClient(uri)
   global._mongoClientPromise = client.connect()
-}
-clientPromise = global._mongoClientPromise
+  return global._mongoClientPromise
+})()
 
 export async function getMongoCollection() {
   const client = await clientPromise
